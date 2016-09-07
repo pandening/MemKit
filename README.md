@@ -29,11 +29,11 @@ functions are builded up.
 ```
 No.5 update information
 -------------------------
-  1.2016/9/7 set up the project.(too much bugs....)     
+  1. 2016/9/7 set up the project.(too much bugs....)     
 
 No.6 Developer
 ------------------------
-  HuJian,E-mail:<1425124481@qq,com>  
+  HuJian,E-mail:<1425124481@qq.com>  
 
 No7. License
 ------------------------
