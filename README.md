@@ -2,33 +2,42 @@ MemKit (LTS)
 ===========================
 No.1 what's this?
 --------------------------
-  if you know about memcache,redis,you can understance the memkit.    
-  this is a key-value storage inmemory,and the engine is map of
-  c++,and you should know about c++11,in a word,this is a key-value
-  store engine. 
+```
+if you know about memcache,redis,you can understance the memkit.      
+this is a key-value storage inmemory,and the engine is map of 
+c++,and you should know about c++11,in a word,this is a key-value 
+store engine.   
+```
 
 No.2 why to do this?
 -------------------------
-  i like it.
+```
+i like it.  
+```
 
 No.3 how to use it?
 -------------------------
-  i offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java> 
-  and the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>    
-  enjoy it!
+```
+i offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
+and the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
+enjoy it!   
+```
 
 No.4 LTS 
 --------------------------
-  this project is a LTS project, i will update the information after new  
-  functions are builded up.   
-
+```
+this project is a LTS project, i will update the information after new  
+functions are builded up.     
+```
 No.5 update information
 -------------------------
   ####1.2016/9/7 set up the project.(too much bugs....)   
 
 No.6 Developer
 ------------------------
-  HuJian,E-mail:<1425124481@qq,com>  
+```
+HuJian,E-mail:<1425124481@qq,com>  
+```
 
 No7. License
 ------------------------
