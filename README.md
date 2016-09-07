@@ -17,11 +17,9 @@ i like it.
 
 No.3 how to use it?
 -------------------------
-```
-i offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
-and the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
-enjoy it!   
-```
+  i offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
+  and the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
+  enjoy it!   
 
 No.4 LTS 
 --------------------------
@@ -31,13 +29,11 @@ functions are builded up.
 ```
 No.5 update information
 -------------------------
-  ####1.2016/9/7 set up the project.(too much bugs....)   
+  1.2016/9/7 set up the project.(too much bugs....)     
 
 No.6 Developer
 ------------------------
-```
-HuJian,E-mail:<1425124481@qq,com>  
-```
+  HuJian,E-mail:<1425124481@qq,com>  
 
 No7. License
 ------------------------
