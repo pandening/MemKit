@@ -35,8 +35,8 @@ i like it.
 
 No.3 how to use it?
 -------------------------
-  i offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
-  and the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
+####I offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
+####And the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
   enjoy it!       
   the follow codes will tell you how to use the memkit.it's very easy to use.   
 ```
@@ -70,7 +70,7 @@ No.5 update information
 
 No.6 Developer
 ------------------------
-  HuJian,E-mail:<1425124481@qq.com>  
+###HuJian,E-mail:<1425124481@qq.com>  
 
 No7. License
 ------------------------
