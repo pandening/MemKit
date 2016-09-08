@@ -24,6 +24,8 @@ is very import,if you do not ensure the formate of the dump file is right,please
 use this way to rebuild dataset)    
 5.the memkit also offer a console runner,this is for server user    
 6.you should choose the 'remote' command to set up the memkit on the server   
+7.The memcached is for Linux,not windows or other platform.   
+8.this memkit based on c++11.so,you should ensure your c++ colpiler support c++11 features    
 
 ```
 
@@ -72,7 +74,14 @@ No.6 Developer
 ------------------------
 ###HuJian,E-mail:<1425124481@qq.com>  
 
-No7. License
+No.7 Platform and Develope Tool
+--------------------------------
+```
+Platform:Linux
+Develop tool:Ubuntu 14.0.4 /64bits Clion 2.1,Ieda +jdk 8
+```
+
+No8. License
 ------------------------
 ```
 Copyright 2016 HuJian
