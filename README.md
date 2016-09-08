@@ -3,11 +3,10 @@ MemKit (LTS)
 No.1 what's this?
 --------------------------
 ```
-if you know about memcache,redis,you can understand the memkit.      
-this is a key-value storage inmemory,and the engine is map of 
-c++,and you should know about c++11,in a word,this is a key-value 
-store engine    
-and this memcached is multi-thread.you can cinfig the backlog to    
+if you know about memcache,redis etc.,you can understand the memkit.      
+this is a key-value storage in memory like this:[store_id][key][value]    
+the store_id just like the database of mysql.   
+and this memcached is multi-thread.you can config the backlog to    
 receive many connection from client,and the data is same to every   
 client.and there are some features of this cache kit you should know:   
 (1).this cache is in-memory,i don't know if the 'dump'/'loadFromfile' 
