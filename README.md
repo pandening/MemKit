@@ -3,7 +3,7 @@ MemKit (LTS)
 No.1 what's this?
 --------------------------
 ```
-if you know about memcache,redis,you can understance the memkit.      
+if you know about memcache,redis,you can understand the memkit.      
 this is a key-value storage inmemory,and the engine is map of 
 c++,and you should know about c++11,in a word,this is a key-value 
 store engine.   
