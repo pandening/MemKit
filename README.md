@@ -10,22 +10,22 @@ store engine
 and this memcached is multi-thread.you can cinfig the backlog to    
 receive many connection from client,and the data is same to every   
 client.and there are some features of this cache kit you should know:   
-1.this cache is in-memory,i don't know if the 'dump'/'loadFromfile' 
+(1).this cache is in-memory,i don't know if the 'dump'/'loadFromfile' 
 works well.but i do not think you need to use the stupid function.    
-2.the timer is very stupid,so after you set the new ttl for item,the put time   
+(2).the timer is very stupid,so after you set the new ttl for item,the put time   
 will reset,and increase from now,the time reach the ttl time,but the timer still  
 sleep,this case will delay the remove time.so,the memory's data is no so 'new'. 
-3.you should offer a config file just like the project,but you can ignore it and    
+(3).you should offer a config file just like the project,but you can ignore it and    
 let the memkit choose for you   
-4.the recommend operators is:put,get,set,ttl,setc,rmappend,flush,flushAll,info    
+(4).the recommend operators is:put,get,set,ttl,setc,rmappend,flush,flushAll,info    
 and you should do not use the functions if possible:load.(in the beginning,i want to    
 let you choose a dump file to rebuild the dataset in the memory,but,the formate of data   
 is very import,if you do not ensure the formate of the dump file is right,please do not   
 use this way to rebuild dataset)    
-5.the memkit also offer a console runner,this is for server user    
-6.you should choose the 'remote' command to set up the memkit on the server   
-7.The memcached is for Linux,not windows or other platform.   
-8.this memkit based on c++11.so,you should ensure your c++ colpiler support c++11 features    
+(5).the memkit also offer a console runner,this is for server user    
+(6).you should choose the 'remote' command to set up the memkit on the server   
+(7).The memcached is for Linux,not windows or other platform.   
+(8).this memkit based on c++11.so,you should ensure your c++ colpiler support c++11 features    
 
 ```
 
