@@ -35,9 +35,9 @@ i like it.
 
 No.3 how to use it?
 -------------------------
-####I offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
-####And the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
-  enjoy it!       
+######I offer a java api for you here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/net/hujian/memkit/client/JMemKitClient.java>     
+######And the demo here:<https://github.com/pandening/MemKit/blob/master/MemKitClient/src/TestClient.java>      
+  Enjoy yourself!       
   the follow codes will tell you how to use the memkit.it's very easy to use.   
 ```
         os<<"\tload      [filePath]                                load cache from file,the old mem will be cleared."<<el;
