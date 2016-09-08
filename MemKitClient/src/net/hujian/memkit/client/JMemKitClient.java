@@ -206,6 +206,17 @@ public class JMemKitClient {
     }
 
     /**
+     * delete a key-value
+     * @param store_id
+     * @param key
+     * @return
+     */
+    public  String delete(String store_id,String key){
+        this.send("rm "+store_id+" "+key);
+        return this.recv();
+    }
+
+    /**
      * just close the connect from server
      * @return
      */

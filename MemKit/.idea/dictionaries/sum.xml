@@ -8,6 +8,7 @@
       <w>memkitutils</w>
       <w>packagetype</w>
       <w>refreshmem</w>
+      <w>remotemem</w>
       <w>remoterunner</w>
       <w>sockaddr</w>
     </words>

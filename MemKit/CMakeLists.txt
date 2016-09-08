@@ -3,5 +3,5 @@ project(MemKit)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pthread")
 
-set(SOURCE_FILES main.cpp MemKit.h MemKitUtils.h ConsoleRunner.h RemoteRunner.h RefreshMem.h)
+set(SOURCE_FILES main.cpp MemKit.h MemKitUtils.h ConsoleRunner.h RemoteRunner.h RefreshMem.h Configure.h)
 add_executable(MemKit ${SOURCE_FILES})

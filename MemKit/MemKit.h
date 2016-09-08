@@ -1,16 +1,27 @@
-//
-// Created by hujian on 16-9-5.
-//
+/**
+ *      copyright C hujian 2016 version 1.0.0
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef MEMKIT_MEMKIT_H
 #define MEMKIT_MEMKIT_H
 
 #define MEMKIT_PRIVATE private
 #define MEMKIT_PUBLIC  public
 #define MEMKIT_PROTECTED protected
-#define DEFAULT_CAPACITY 1000 //the default storage capacity is 1000 items
-#define OUT_OF_TTL_BOUNDER 1000*60*60
-#define DEFAULT_TTL 1000*60*60 /*one hour*/
-#define DEFAULT_DUMP_FILE "./dump.txt"
 
 #include<map> /*for map*/
 #include<string> /*for string*/
@@ -18,6 +29,8 @@
 #include <iostream> /*for cout*/
 #include <time.h>
 #include <fstream> /*for I/O*/
+
+#include "Configure.h"
 
 typedef std::string String;
 typedef long Long;
@@ -32,7 +45,6 @@ static class MemKit* memKit_instance;
 typedef struct ttl{
     long TTL;
     long putTime;
-    long leave;
 }ttl_t;
 /**
  * the ttl setter
@@ -67,6 +79,10 @@ MEMKIT_PRIVATE:
      * the current size
      */
     Long storage_size;
+    /**
+     * the config
+     */
+    MemKitConfig* config;
 
     /**
      * THE PROTECTED PART
@@ -92,6 +108,7 @@ MEMKIT_PROTECTED:
         }
         else{//exist this storage
             (*itr).second.insert(std::pair<String,ttl_t>(key,info));
+            time_to_live[store_id][key]=info;
         }
     }
     /**
@@ -103,6 +120,7 @@ MEMKIT_PROTECTED:
         this->storage_capacity=capacity;
         this->storage_size=0;
         this->storage.clear();
+        config=MemKitConfig::getConfigure();
     }
     /**
      * if you want to load the file to memcache
@@ -125,11 +143,23 @@ MEMKIT_PROTECTED:
                key=line.substr(0,sp);
                value=line.substr(sp,line.length());
                memKit_instance->put(store_id,key,value);
-               std::cout<<store_id<<" "<<key<<" "<<value<<std::endl;
            }
         }
         reader.close();
+        config=MemKitConfig::getConfigure();
         return memKit_instance;
+    }
+
+    /**
+     * set the key's ttl
+     * @param setter
+     */
+    void set(TTL_info setter){
+        /**
+         * you should set the ttl.
+         */
+        setter.ttl_info.putTime=this->getMillis();
+        this->setTTL(setter.store_id,setter.key,setter.ttl_info);
     }
 
     /**
@@ -170,31 +200,10 @@ MEMKIT_PUBLIC:
      * @return
      */
      MemKit* loadFromFile(String file){
-        memKit_instance=new MemKit(DEFAULT_CAPACITY);
+        memKit_instance=new MemKit(atol(config->getCapacity().c_str()));
         return load(file);
     }
-    /**
-     * delete the ttl item
-     * @param store_id
-     * @param key
-     * @return
-     */
-    String popTm(String store_id,String key){
-        std::map<String,std::map<String,ttl_t>>::iterator sit=
-                this->time_to_live.find(store_id);
-        if(sit==this->time_to_live.end()){
-            return "";//nothing to delete
-        }else{
-            std::map<String,ttl_t>::iterator dit=(*sit).second.find(key);
-            if(dit==(*sit).second.end()){
-                return "";
-            }else{
-                String p=(*dit).first;
-                (*sit).second.erase(dit);
-                return p;
-            }
-        }
-    }
+
 
     /**
      * delete the item
@@ -219,19 +228,33 @@ MEMKIT_PUBLIC:
                 return p;
             }
         }
+        std::cout<<"rm ok"<<std::endl;
     }
-
     /**
-     * set the key's ttl
-     * @param setter
+     * delete the ttl item
+     * @param store_id
+     * @param key
+     * @return
      */
-    void set(TTL_info setter){
-        /**
-         * you should set the ttl.
-         */
-        setter.ttl_info.putTime=this->getMillis();
-        setter.ttl_info.leave=time((time_t*)NULL)-setter.ttl_info.putTime;
-        this->setTTL(setter.store_id,setter.key,setter.ttl_info);
+    String popTm(String store_id,String key){
+        std::map<String,std::map<String,ttl_t>>::iterator sit=
+                this->time_to_live.find(store_id);
+        if(sit==this->time_to_live.end()){
+            return "";//nothing to delete
+        }else{
+            std::map<String,ttl_t>::iterator dit=(*sit).second.find(key);
+            if(dit==(*sit).second.end()){
+                return "";
+            }else{
+                String p=(*dit).first;
+                this->time_to_live[store_id].erase(key);
+                /**
+                 * also,you should del the mem
+                 */
+                this->popMem(store_id,key);
+                return p;
+            }
+        }
     }
     /**
      * another ttl function
@@ -244,7 +267,6 @@ MEMKIT_PUBLIC:
         setter.store_id=store_id;
         setter.key=key;
         setter.ttl_info.TTL=ttl;
-        setter.ttl_info.leave=0;
         set(setter);
     }
     /**
@@ -255,18 +277,41 @@ MEMKIT_PUBLIC:
      */
     TTL_info ttl(String store_id,String key){
         TTL_info info;
-        std::map<String,std::map<String,ttl_t>>::iterator itr=
-                this->time_to_live.find(store_id);
-        if(itr!=this->time_to_live.end()){
-            std::map<String,ttl_t>::iterator si= (*itr).second.find(key);
-            if(si!=(*itr).second.end()){
-                info.store_id=store_id;
-                info.key=key;
-                info.ttl_info=(*si).second;
+        if(this->exist(store_id,key)) {
+            std::map<String, std::map<String, ttl_t>>::iterator itr =
+                    this->time_to_live.find(store_id);
+            if (itr != this->time_to_live.end()) {
+                std::map<String, ttl_t>::iterator si = (*itr).second.find(key);
+                if (si != (*itr).second.end()) {
+                    info.store_id = store_id;
+                    info.key = key;
+                    info.ttl_info = (*si).second;
+                }
             }
+        }else{
+            info.store_id=store_id;
+            info.key=key;info.ttl_info.TTL=0;
         }
         return info;
     }
+    /**
+     * check if the store_id@key is existe
+     * @param store_id
+     * @param key
+     * @return
+     */
+    bool exist(String store_id,String key){
+        if(this->storage.find(store_id)==this->storage.end()){
+            return false;
+        }else{
+            if(this->storage[store_id].find(key)==this->storage[store_id].end()){
+                return false;
+            }else{
+                return true;
+            }
+        }
+    }
+
     /**
      * get the leave time
      * @param store_id
@@ -274,7 +319,13 @@ MEMKIT_PUBLIC:
      * @return
      */
     long getTTL(String store_id,String key){
-        return ttl(store_id,key).ttl_info.leave;
+        if(this->exist(store_id,key)){
+            std::cout<<"ttl:"<<ttl(store_id,key).ttl_info.TTL<<std::endl;
+            return (getMillis()-ttl(store_id,key).ttl_info.putTime);
+        }else{
+            std::cout<<"die!"<<std::endl;
+            return 0;
+        }
     }
     /**
      * get the value
@@ -285,11 +336,11 @@ MEMKIT_PUBLIC:
     String get(String store_id,String key){
         std::map<String,std::map<String,String>>::iterator IdItr=this->storage.find(store_id);
         if(IdItr==this->storage.end()){/*no this storage*/
-            return NULL;
+            return "null";
         }else{
             std::map<String,String>::iterator itr=(*IdItr).second.find(key);
             if(itr==(*IdItr).second.end()){
-                return NULL;
+                return "null";
             }else{
                 return (*itr).second;
             }
@@ -390,9 +441,8 @@ MEMKIT_PUBLIC:
             TTL_info myTTL;
             myTTL.store_id=store_id;
             myTTL.key=key;
-            myTTL.ttl_info.leave=0;
             myTTL.ttl_info.putTime=getMillis();
-            myTTL.ttl_info.TTL=DEFAULT_TTL;
+            myTTL.ttl_info.TTL=atol(config->getTTL().c_str());
             set(myTTL);
         }
     }
@@ -409,9 +459,8 @@ MEMKIT_PUBLIC:
             TTL_info myTTL;
             myTTL.store_id=store_id;
             myTTL.key=key;
-            myTTL.ttl_info.leave=0;
             myTTL.ttl_info.putTime=getMillis();
-            myTTL.ttl_info.TTL=DEFAULT_TTL;
+            myTTL.ttl_info.TTL=atol(config->getTTL().c_str());
             set(myTTL);
             /**
              * check if the store id exist
@@ -456,9 +505,8 @@ MEMKIT_PUBLIC:
             TTL_info myTTL;
             myTTL.store_id=store_id;
             myTTL.key=key;
-            myTTL.ttl_info.leave=0;
             myTTL.ttl_info.putTime=getMillis();
-            myTTL.ttl_info.TTL=DEFAULT_TTL;
+            myTTL.ttl_info.TTL=atol(config->getTTL().c_str());
             set(myTTL);
             std::cout<<"out of capacity,refuse to insert."<<std::endl;
             return this->storage_size;

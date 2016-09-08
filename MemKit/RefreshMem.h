@@ -1,7 +1,21 @@
-//
-// Created by hujian on 16-9-7.
-//
-
+/**
+ *      copyright C hujian 2016 version 1.0.0
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef MEMKIT_REFRESHMEM_H
 #define MEMKIT_REFRESHMEM_H
 
@@ -34,10 +48,9 @@ private:
          */
         while(true){
             ttl_Map=Mem->getTTLStorage();
-            os<<"i am timer,i am running..."<<el;
             long del=0;
             sleep(this->time_to_refresh);
-            os<<"total size to scan=>"<<ttl_Map.size()<<el;
+            os<<"Timer:total size to scan=>"<<ttl_Map.size()<<el;
             if(ttl_Map.size()==0){
                 continue;
             }
@@ -45,7 +58,10 @@ private:
             std::map<String,ttl_t>::iterator kit;
             for(;sit!=ttl_Map.end();sit++){
                 for(kit=(*sit).second.begin();kit!=(*sit).second.end();kit++){
-                    (*kit).second.leave=time((time_t*)NULL)-(*kit).second.putTime;
+                    if(time((time_t*)NULL)-(*kit).second.putTime>=(*kit).second.TTL){
+                        Mem->popTm((*sit).first,(*kit).first);
+                        del++;
+                    }
                 }
             }
             os<<"Total delete of time out items:"<<del<<el;
@@ -54,12 +70,12 @@ private:
 public:
     /**
      * the constructor
-     * @param ftime
+     * @param fTime
      * @return
      */
-    RefreshMem(long ftime){
+    RefreshMem(long fTime){
         Mem=MemKit::getInstance(1234);
-        this->time_to_refresh=ftime;
+        this->time_to_refresh=fTime;
         this->puppet();
     }
 };

@@ -23,6 +23,9 @@ public class TestClient {
      * @param args
      */
     public static void main(String[] args){
+        control();
+        System.exit(0);
+
         /**
          * the response
          */
@@ -106,8 +109,10 @@ public class TestClient {
 
     /**
      * if you want to control the server,just use this function
+     * this is a remote console.you can control the server by this
+     * client.
      */
-    void control(){
+    static void control(){
         try {
             Socket socket=new Socket("127.0.0.1",6423);
             BufferedReader in=new BufferedReader(new InputStreamReader(System.in));

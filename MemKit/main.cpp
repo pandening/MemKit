@@ -1,3 +1,21 @@
+/**
+ *      copyright C hujian 2016 version 1.0.0
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include "ConsoleRunner.h"
 #include "RemoteRunner.h"
 #include "RefreshMem.h"
@@ -6,7 +24,6 @@ typedef struct remote_ds{
     int file_ds;
     MemKit* memKit;
 }remote_ds_t;
-
 
 /**
  * handler
@@ -34,6 +51,7 @@ void do_remote_job(remote_ds_t info) {
          * 10.info
          * 11.exit
          * 12.load
+         * 13.rm
          */
         String line, store_id, key, value, cmd, file, ttl, cap, clear, newV, command, response;
         std::vector<String> splitVec;
@@ -41,7 +59,9 @@ void do_remote_job(remote_ds_t info) {
         if(buffer[strlen(buffer)-1]=='\n') {
             line=line.substr(0,line.length()-1);
         }
-        os<<"Receive Length:"<<rcv_len<<"@command["<<line<<"]"<<el;
+        if(DEBUG) {
+            os << "Receive Length:" << rcv_len << "@command[" << line << "]" << el;
+        }
         splitVec.clear();
         splitVec = MemKitUtils::split(line, " ");
         if (splitVec.empty()) {
@@ -55,11 +75,20 @@ void do_remote_job(remote_ds_t info) {
         }
         command = splitVec[0];
         switch (command[0]) {
+            case 'r':{
+                store_id=splitVec[1];
+                key=splitVec[2];
+                if(DEBUG) {
+                    os << "delete store[" << store_id << "] key[" << key << "]" << el;
+                }
+                response=info.memKit->popMem(store_id,key);
+                break;
+            }
             case 'e': {
                 os << "\tclose the file des connection,Bye~" << el;
                 response="exit\n";
-                int send_len=send(info.file_ds, response.c_str(), strlen(response.c_str()), 0);
-                response="";
+                send(info.file_ds, response.c_str(), strlen(response.c_str()), 0);
+                response="exit";
                 close(info.file_ds);
                 loop=false;
                 break;
@@ -254,12 +283,11 @@ void run_RemoteRunner()
     struct sockaddr_in client_sockaddr;
     server_sock_fd=runner->get_server_sock_fd();
     while(1) {
-        os<<"i am accept...."<<el;
+        os<<"i am acceptting...."<<el;
         length = sizeof(client_sockaddr);
         int connection_fd = accept(server_sock_fd,
                                    (struct sockaddr *) &client_sockaddr, &length);
         if (connection_fd < 0) {
-            os << "error" << el;
             perror("accept error");
             exit(1);
         } else {
@@ -299,15 +327,16 @@ void run_Console()
  */
 int main(int argc,char**argv) {
     /**
-     * first of all,set up the check
+     * show the base config
      */
-    os<<"the time to refresh time is:";
-    long fresh;
-    is>>fresh;
-    while(fresh<10){
-        os<<"too small to check(fresh>10):";
-        is>>fresh;
-    }
+    MemKitConfig* config=MemKitConfig::getConfigure();
+    os<<"\tip:"<<config->getIP()<<el;
+    os<<"\tport:"<<config->getPort()<<el;
+    os<<"\tcapacity:"<<config->getCapacity()<<el;
+    os<<"\trefresh:"<<config->getRTime()<<el;
+    os<<"\tttl:"<<config->getTTL()<<el;
+    os<<"\tbacklog:"<<config->getBackLog()<<el;
+
     String cmd;
     while(1){
         os<<"\tlocal/remote/exit:";
@@ -317,8 +346,9 @@ int main(int argc,char**argv) {
         }
         if(cmd=="local"){
             std::thread console(run_Console);
-            console.detach();
+            console.join();
         }else if(cmd=="remote"){
+            long fresh=atol(config->getRTime().c_str());
             std::thread freshThread(run_refreshMem,fresh);
             freshThread.detach();
             run_RemoteRunner();

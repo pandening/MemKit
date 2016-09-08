@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/MemKitUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RefreshMem.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RemoteRunner.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Configure.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">

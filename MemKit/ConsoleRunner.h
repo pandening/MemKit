@@ -1,7 +1,21 @@
-//
-// Created by hujian on 16-9-6.
-//
-
+/**
+ *      copyright C hujian 2016 version 1.0.0
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef MEMKIT_CONSOLERUNNER_H
 #define MEMKIT_CONSOLERUNNER_H
 #include <vector> /*for vector*/
@@ -122,7 +136,6 @@ public:
             command=splitVec[0];
             switch (command[0]) {
                 case 'r':{
-                    cmd=splitVec[0];
                     store_id=splitVec[1];
                     key=splitVec[2];
                     if(DEBUG) {
@@ -153,7 +166,6 @@ public:
                          * action
                          */
                         this->__instance = this->__instance->loadFromFile(file);
-                        os << "\tload ok" << el;
                         if(DEBUG){
                             os<<"file:["<<file<<"]"<<el;
                         }
@@ -183,7 +195,6 @@ public:
                          * action
                          */
                         this->__instance->set(store_id, key, atol(ttl.c_str()));
-                        os << "\tset ttl ok:" << el;
                         break;
 
                     } else if (cmd == "setc" || cmd == "SETC") {
@@ -195,7 +206,6 @@ public:
                          * action
                          */
                         this->__instance->setCapacity(atol(cap.c_str()));
-                        os << "\tset new capacity ok:" << this->__instance->capacity() << el;
                         if(DEBUG){
                             os<<"new capacity["<<cap<<"]"<<el;
                         }

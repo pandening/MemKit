@@ -1,6 +1,21 @@
-//
-// Created by hujian on 16-9-7.
-//
+/**
+ *      copyright C hujian 2016 version 1.0.0
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #ifndef MEMKIT_REMOTERUNNER_H
 #define MEMKIT_REMOTERUNNER_H
@@ -21,8 +36,6 @@
  * for easy,i just define the port and ip in this file.
  * there will be a config file in the futher.
  */
-#define PORT 6423
-#define BACKLOG 10
 
 #define BUFFER_SIZE 1024
 
@@ -48,6 +61,10 @@ private:
      * the mem kit
      */
     MemKit* RemotememKit;
+    /**
+     * the config
+     */
+    MemKitConfig* config;
 protected:
     /**
      * get the file des
@@ -65,7 +82,7 @@ protected:
      */
     void set_up_sock_addr(){
         this->server_sockaddr.sin_family=AF_INET;
-        this->server_sockaddr.sin_port=htons(PORT);
+        this->server_sockaddr.sin_port=htons(atoi(config->getPort().c_str()));
         this->server_sockaddr.sin_addr.s_addr=htonl(INADDR_ANY);
     }
     /**
@@ -81,7 +98,7 @@ protected:
      * listen
      */
     void Listen(){
-        if(listen(server_sock_fd,BACKLOG)==-1){
+        if(listen(server_sock_fd,atol(config->getBackLog().c_str()))==-1){
             os<<"listener error"<<el;
             exit(-1);
         }
@@ -92,11 +109,12 @@ public:
      * @return
      */
     RemoteRunner(){
+        config=MemKitConfig::getConfigure();
         this->get_sock_fd();
         this->set_up_sock_addr();
         this->Bind();
         this->Listen();
-        this->RemotememKit=MemKit::getInstance(DEFAULT_CAPACITY);
+        this->RemotememKit=MemKit::getInstance(atol(config->getCapacity().c_str()));
     }
     /**
      * get the mem kit
@@ -104,7 +122,7 @@ public:
      */
     MemKit* getMemKit(){
         if(this->RemotememKit==NULL){
-            this->RemotememKit=MemKit::getInstance(DEFAULT_CAPACITY);
+            this->RemotememKit=MemKit::getInstance(atol(config->getCapacity().c_str()));
         }
         return this->RemotememKit;
     }
