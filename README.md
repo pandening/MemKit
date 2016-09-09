@@ -81,7 +81,7 @@ Platform:Linux
 Develop tool:Ubuntu 14.0.4 /64bits Clion 2.1,Ieda +jdk 8
 ```
 
-No8. License
+No.8 License
 ------------------------
 ```
 Copyright 2016 HuJian
