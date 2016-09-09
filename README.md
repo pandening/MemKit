@@ -67,6 +67,7 @@ No.5 update information
 ```
 1. 2016/9/7 set up the project.(too much bugs....)      
 2. 2016/9/8 fix many bugs,include the timer.now the memkit can work~      
+3. 2016/9/9 build up the memkit cluster version,parallel LTS with this project~
 ```
 
 No.6 Developer
@@ -97,3 +98,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+No.9 Links
+--------------------------------
+###Another project based on this project:<https://github.com/pandening/MemKit-Cluster>    
