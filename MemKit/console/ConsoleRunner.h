@@ -20,12 +20,13 @@
 #define MEMKIT_CONSOLERUNNER_H
 #include <vector> /*for vector*/
 
-#include "MemKitUtils.h"
+#include "../MemKitUtils/MemKitUtils.h"
+#include "../conf/Configure.h"
 
 #define os std::cout
 #define el std::endl
 #define is std::cin
-#define DEBUG 0
+#define DEBUG 0   /*for debug*/
 
 /**
  * run on console
@@ -37,6 +38,10 @@ private:
      */
     MemKit* __instance;
     /**
+     * the config
+     */
+    MemKitConfig* config;
+    /**
      * show the usage
      */
     void usage(){
@@ -44,7 +49,7 @@ private:
         os<<"\tset       [store id][key][time to live(mills)]      set ttl for store@key"<<el;
         os<<"\tttl       [store id][key]                           get the ttl of store@key"<<el;
         os<<"\tget       [store id][key]                           get the value"<<el;
-        os<<"\tdump      [true/false]                              dump to disk.(true means flush the cache)"<<el;
+        os<<"\tdump      [file][true/false]                        dump to disk.(true means flush the cache)"<<el;
         os<<"\tappend    [store id][key][append value]             append a value"<<el;
         os<<"\tput       [store id][key][value]                    put a key-value"<<el;
         os<<"\tflush     [store]                                   flush the storage"<<el;
@@ -52,7 +57,10 @@ private:
         os<<"\tinfo                                                show the size"<<el;
         os<<"\tsetc      [new capacity]                            re-set the capacity"<<el;
         os<<"\trm        [store id][key]                           delete the key-value"<<el;
+        os<<"\texist     [store id][key]                           judge if the id@key exist"<<el;
+        os<<"\texistid   [store id]                                just check the store id"<<el;
         os<<"\texit                                                exit~"<<el;
+        os<<"\thh                                                  alive false"<<el;
     }
     /**
      * like trim
@@ -103,6 +111,7 @@ public:
         }else{
             this->__instance=MemKit::getInstance(capacity);
         }
+        config=MemKitConfig::getConfigure();
     }
     /**
      * run~
@@ -135,6 +144,10 @@ public:
             }
             command=splitVec[0];
             switch (command[0]) {
+                case 'h':{
+                    os<<"alive"<<el;
+                    break;
+                }
                 case 'r':{
                     store_id=splitVec[1];
                     key=splitVec[2];
@@ -142,11 +155,34 @@ public:
                         os << "delete store[" << store_id << "] key[" << key << "]" << el;
                     }
                     this->__instance->popMem(store_id,key);
+                    os<<"deleted"<<el;
                     break;
                 }
                 case 'e':{
-                    os<<"\tBye~"<<el;
-                   exit(0);
+                    cmd=splitVec[0];
+                    if(cmd=="exit") {
+                        os << "\tBye~" << el;
+                        exit(0);
+                    }else if(cmd=="exist"){//you just want to check
+                        store_id=splitVec[1];
+                        key=splitVec[2];
+                        bool check=this->__instance->exist(store_id,key);
+                        if(check){
+                            os<<"true"<<el;
+                        }else{
+                            os<<"false"<<el;
+                        }
+                        break;
+                    }else{//exist id
+                        store_id=splitVec[1];
+                        bool check=this->__instance->exist(store_id);
+                        if(check){
+                            os<<"true"<<el;
+                        }else{
+                            os<<"false"<<el;
+                        }
+                        break;
+                    }
                 }
                 case 'l': {//load from file
                     cmd = splitVec[0];
@@ -206,6 +242,7 @@ public:
                          * action
                          */
                         this->__instance->setCapacity(atol(cap.c_str()));
+                        os<<"set capacity ok"<<el;
                         if(DEBUG){
                             os<<"new capacity["<<cap<<"]"<<el;
                         }
@@ -240,14 +277,19 @@ public:
                         os<<"store_id["<<store_id<<"] key["<<key<<"]"<<el;
                     }
                     break;
-
                 }
                 case 'd': {//dump
-                    clear = splitVec[1];
-                    if (clear == "true") {
-                        this->__instance->dump(true);
-                    } else {
-                        this->__instance->dump(false);
+                    if(splitVec.size()==3) {
+                        clear = splitVec[2];
+                        String file = splitVec[1];
+                        if (clear == "true") {
+                            this->__instance->dump(file, true);
+                        } else {
+                            this->__instance->dump(file, false);
+                        }
+                    }else if(splitVec.size()==2){
+                        String file=splitVec[1];
+                        this->__instance->dump(file);
                     }
                     os << "\tdump ok~" << el;
                     if(DEBUG){
@@ -308,9 +350,15 @@ public:
                         break;
                     }
                 }
-                case 'i': {//show the size
-                    os << "\tcapacity:" << this->__instance->capacity() << el << "\tsize:" << this->__instance->size()
-                       << el;
+                case 'i': {
+                    /**
+                     * ok,this info will contains many information
+                     * capacity,size,ip,port,name
+                     */
+                    os << "\tcapacity:" << this->__instance->capacity()
+                       << " size:" << this->__instance->size()<<" ip:"
+                       <<config->getIP()<<" port:"<<config->getPort()
+                       <<","<<config->getName()<<el;
                     break;
                 }
                 default: {

@@ -16,9 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "ConsoleRunner.h"
-#include "RemoteRunner.h"
-#include "RefreshMem.h"
+#include "console/ConsoleRunner.h"
+#include "remote/RemoteRunner.h"
+#include "core/RefreshMem.h"
+#include "core/MemKitAutoDumpHandler.h"
+#include "RebuildMem/RebuildMemByLogFile.h"
 
 typedef struct remote_ds{
     int file_ds;
@@ -30,6 +32,7 @@ typedef struct remote_ds{
  * @param info
  */
 void do_remote_job(remote_ds_t info) {
+    MemKitConfig* config=MemKitConfig::getConfigure();
     bool loop=true;
     while (loop) {
         char buffer[BUFFER_SIZE];
@@ -52,6 +55,7 @@ void do_remote_job(remote_ds_t info) {
          * 11.exit
          * 12.load
          * 13.rm
+         * 14.exist
          */
         String line, store_id, key, value, cmd, file, ttl, cap, clear, newV, command, response;
         std::vector<String> splitVec;
@@ -75,6 +79,10 @@ void do_remote_job(remote_ds_t info) {
         }
         command = splitVec[0];
         switch (command[0]) {
+            case 'h':{//i am alive
+                response="alive";
+                break;
+            }
             case 'r':{
                 store_id=splitVec[1];
                 key=splitVec[2];
@@ -85,13 +93,35 @@ void do_remote_job(remote_ds_t info) {
                 break;
             }
             case 'e': {
-                os << "\tclose the file des connection,Bye~" << el;
-                response="exit\n";
-                send(info.file_ds, response.c_str(), strlen(response.c_str()), 0);
-                response="exit";
-                close(info.file_ds);
-                loop=false;
-                break;
+                cmd=splitVec[0];
+                if(cmd=="exit") {
+                    os << "\tclose the file des connection,Bye~" << el;
+                    response = "exit\n";
+                    send(info.file_ds, response.c_str(), strlen(response.c_str()), 0);
+                    response = "exit";
+                    close(info.file_ds);
+                    loop = false;
+                    break;
+                }else if(cmd=="exist"){
+                    store_id=splitVec[1];
+                    key=splitVec[2];
+                    bool check=info.memKit->exist(store_id,key);
+                    if(check){
+                        response="true";
+                    }else{
+                        response="false";
+                    }
+                    break;
+                }else{
+                    store_id=splitVec[1];
+                    bool check=info.memKit->exist(store_id);
+                    if(check){
+                        response="true";
+                    }else{
+                        response="false";
+                    }
+                    break;
+                }
             }
             case 'l': {//load from file
                 cmd = splitVec[0];
@@ -186,19 +216,6 @@ void do_remote_job(remote_ds_t info) {
                 }
                 break;
             }
-            case 'd': {//dump
-                clear = splitVec[1];
-                if (clear == "true") {
-                    info.memKit->dump(true);
-                } else {
-                    info.memKit->dump(false);
-                }
-                response = "ok";
-                if (DEBUG) {
-                    os << "flag[" << clear << "]" << el;
-                }
-                break;
-            }
             case 'a': {
                 store_id = splitVec[1];
                 key = splitVec[2];
@@ -252,9 +269,11 @@ void do_remote_job(remote_ds_t info) {
                     break;
                 }
             }
-            case 'i': {//show the size
+            case 'i': {//capacity,size,ip,port,name
                 response = MemKitUtils::parseString(info.memKit->capacity()) +
-                           "," + MemKitUtils::parseString(info.memKit->size());
+                           "," + MemKitUtils::parseString(info.memKit->size())+
+                           ","+ config->getIP()+","+config->getPort()+
+                           ","+config->getName();
                 break;
             }
             default: {
@@ -265,6 +284,7 @@ void do_remote_job(remote_ds_t info) {
          * send the response
          */
         response+="\n";
+        response="ack_"+response;
         int send_len=send(info.file_ds, response.c_str(), strlen(response.c_str()), 0);
         if(DEBUG){
             os << "The response is:[" << response << "]" <<"send length:"<<send_len<<el;
@@ -283,7 +303,7 @@ void run_RemoteRunner()
     struct sockaddr_in client_sockaddr;
     server_sock_fd=runner->get_server_sock_fd();
     while(1) {
-        os<<"i am acceptting...."<<el;
+        os<<"i am listen....."<<el;
         length = sizeof(client_sockaddr);
         int connection_fd = accept(server_sock_fd,
                                    (struct sockaddr *) &client_sockaddr, &length);
@@ -309,6 +329,18 @@ void run_refreshMem(long seconds){
      */
     RefreshMem* refreshMem=new RefreshMem(seconds);
 }
+/**
+ * auto dump the memkit to disk
+ */
+void run_autoDump(){
+    AutoDumpHandler* autoDumpHandler=new AutoDumpHandler;
+}
+/**
+ * re-build the mem by the file
+ */
+void run_reBuildMem(){
+    RebuildMemKit* rebuildMemKit=new RebuildMemKit;
+}
 
 /**
  * console runner
@@ -317,6 +349,75 @@ void run_Console()
 {
     ConsoleRunner* runner=new ConsoleRunner(1024);
     runner->run();
+}
+/**
+ * this function will send the mem kit's information to server
+ * let the server know about it.
+ */
+void report_to_server_manage(){
+    /**
+     * for get the information
+     */
+    MemKitConfig* config=MemKitConfig::getConfigure();
+    /**
+     * for get size
+     */
+    MemKit* memKit=MemKit::getInstance(1024);
+    MemKitUtils* memKitUtils=new MemKitUtils();
+    /**
+     * capacity,size,ip,port,name
+     */
+    String report="ack_"+config->getCapacity()+","+memKitUtils->parseString(memKit->size())+
+                  ","+config->getIP()+","+config->getPort()+","+config->getName()+"\n";
+    os<<"-->Report information:"<<report;
+    String toIP=config->getManagerIP();
+    int toPort=atoi(config->getManagerPort().c_str());
+    /**
+     * connect to server
+     */
+    int sock=socket(AF_INET,SOCK_STREAM,0);
+    struct sockaddr_in server_addr;
+    memset(&server_addr,0,sizeof(server_addr));
+    /**
+     * set up the server address
+     */
+    server_addr.sin_family=AF_INET;
+    server_addr.sin_port=htons(toPort);
+    server_addr.sin_addr.s_addr=inet_addr(toIP.c_str());
+    while(true) {
+        /**
+         * start to connect
+         */
+        if (connect(sock, (struct sockaddr *) &server_addr, sizeof(server_addr))>=0) {
+            break;
+        }
+        perror("connect to server manager error");
+        sleep(1);
+    }
+    char buf[1024];
+    /**
+     * send to server my information
+     */
+    int send_len=send(sock, report.c_str(), strlen(report.c_str()), 0);
+    os<<"Report to server manager:"<<send_len<<" bytes"<<el;
+    memset(buf,0, sizeof(buf));
+    while(true) {
+        /**
+         * recv the ack
+         */
+        if(recv(sock, buf, sizeof((buf)), 0)>0){
+            break;
+        }
+        os<<"---wait to receive...."<<el;
+        sleep(1);
+    }
+    report=buf;
+    report=report.substr(0,report.length()-1);
+    os<<"receive from server manager:["<<report<<"]"<<el;
+    /**
+     * close the connection
+     */
+    close(sock);
 }
 
 /**
@@ -336,18 +437,48 @@ int main(int argc,char**argv) {
     os<<"\trefresh:"<<config->getRTime()<<el;
     os<<"\tttl:"<<config->getTTL()<<el;
     os<<"\tbacklog:"<<config->getBackLog()<<el;
-
+    os<<"\tname:"<<config->getName()<<el;
+    os<<"\tmanager ip:"<<config->getManagerIP()<<el;
+    os<<"\tmanager port:"<<config->getManagerPort()<<el;
+    os<<"\tremote flag:"<<config->getFlag()<<el;
+    os<<"\trebuild flag:"<<config->getAutoRebuildFlag()<<el;
+    os<<"\tauto dump timer:"<<config->getAutoDumpTime()<<" s"<<el;
+    os<<"\tlog file:"<<config->getDumpFile()<<el;
     String cmd;
-    while(1){
-        os<<"\tlocal/remote/exit:";
+    while(true){
+        os<<el<<"\tlocal/remote/exit:";
         is>>cmd;
         if(cmd!="local"&&cmd!="remote"&&cmd!="exit"){
             continue;
+        }
+        /**
+         * auto dump
+         */
+        std::thread AutoDump(run_autoDump);
+        AutoDump.detach();
+        /**
+         * re-build
+         */
+        if(config->getAutoRebuildFlag()=="true"){
+            std::thread rebuild(run_reBuildMem);
+            /**
+             * wait to back.
+             */
+            rebuild.join();
         }
         if(cmd=="local"){
             std::thread console(run_Console);
             console.join();
         }else if(cmd=="remote"){
+            /**
+             * report my information to server
+             */
+            if(config->getFlag()=="true"){
+                os<<"i am sending the information to server.....";
+                std::thread Report(report_to_server_manage);
+                Report.join();
+                os<<"report done";
+            }
             long fresh=atol(config->getRTime().c_str());
             std::thread freshThread(run_refreshMem,fresh);
             freshThread.detach();

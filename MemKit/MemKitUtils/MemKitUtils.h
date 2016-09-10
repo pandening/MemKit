@@ -24,7 +24,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "MemKit.h"
+#include "../core/MemKit.h"
 
 typedef std::string String;
 

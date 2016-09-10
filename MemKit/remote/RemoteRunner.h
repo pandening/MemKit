@@ -43,7 +43,7 @@
 #define os  std::cout
 #define el  std::endl
 
-#include "MemKit.h"
+#include "../core/MemKit.h"
 /**
  * the remote runner
  */

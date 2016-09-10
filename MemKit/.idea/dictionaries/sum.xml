@@ -5,8 +5,10 @@
       <w>consolerunner</w>
       <w>hujian</w>
       <w>memkit</w>
+      <w>memkitautodumphandler</w>
       <w>memkitutils</w>
       <w>packagetype</w>
+      <w>rebuildmembylogfile</w>
       <w>refreshmem</w>
       <w>remotemem</w>
       <w>remoterunner</w>
