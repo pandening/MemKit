@@ -45,7 +45,7 @@ No.3 how to use it?
         os<<"\tset       [store id][key][time to live(mills)]      set ttl for store@key"<<el;
         os<<"\tttl       [store id][key]                           get the ttl of store@key"<<el;
         os<<"\tget       [store id][key]                           get the value"<<el;
-        os<<"\tdump      [true/false]                              dump to disk.(true means flush the cache)"<<el;
+        os<<"\tdump      [file][true/false]                        dump to disk.(true means flush the cache)"<<el;
         os<<"\tappend    [store id][key][append value]             append a value"<<el;
         os<<"\tput       [store id][key][value]                    put a key-value"<<el;
         os<<"\tflush     [store]                                   flush the storage"<<el;
@@ -53,7 +53,10 @@ No.3 how to use it?
         os<<"\tinfo                                                show the size"<<el;
         os<<"\tsetc      [new capacity]                            re-set the capacity"<<el;
         os<<"\trm        [store id][key]                           delete the key-value"<<el;
+        os<<"\texist     [store id][key]                           judge if the id@key exist"<<el;
+        os<<"\texistid   [store id]                                just check the store id"<<el;
         os<<"\texit                                                exit~"<<el;
+        os<<"\thh                                                  alive false"<<el;
 
 ```
 No.4 LTS 
@@ -65,9 +68,10 @@ functions are builded up.
 No.5 update information
 -------------------------
 ```
-1. 2016/9/7 set up the project.(too much bugs....)      
-2. 2016/9/8 fix many bugs,include the timer.now the memkit can work~      
-3. 2016/9/9 build up the memkit cluster version,parallel LTS with this project~
+1. 2016/9/7   set up the project.(too much bugs....)      
+2. 2016/9/8   fix many bugs,include the timer.now the memkit can work~      
+3. 2016/9/9   build up the memkit cluster version,parallel LTS with this project~
+4. 2016/9/10  re-organize the files,and set up the auto-dump engine,you can rebuild the memkit now~ 
 ```
 
 No.6 Developer
