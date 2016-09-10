@@ -71,7 +71,10 @@ No.5 update information
 1. 2016/9/7   set up the project.(too much bugs....)      
 2. 2016/9/8   fix many bugs,include the timer.now the memkit can work~      
 3. 2016/9/9   build up the memkit cluster version,parallel LTS with this project~
-4. 2016/9/10  re-organize the files,and set up the auto-dump engine,you can rebuild the memkit now~ 
+4. 2016/9/10  
+            (1). re-organize the files,and set up the auto-dump engine,you can rebuild the memkit now~  
+            (2). add new timer,let the timer to control the memkit's securty  
+            (3). show the run interface for you~
 ```
 
 No.6 Developer
@@ -106,3 +109,8 @@ limitations under the License.
 No.9 Links
 --------------------------------
 ###Another project based on this project:<https://github.com/pandening/MemKit-Cluster>    
+
+No.10 Like?
+--------------------------------
+![image](https://github.com/pandening/images/blob/master/interface.png)
+![image](https://github.com/pandening/images/blob/master/interface%20(2).png)
