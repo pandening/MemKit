@@ -386,7 +386,7 @@ MEMKIT_PUBLIC:
         writer.flush();
         writer.close();
         /**
-         * you say you want to clear the starage
+         * you say you want to clear the storage
          */
         if(clear==true){
             this->flushAll();

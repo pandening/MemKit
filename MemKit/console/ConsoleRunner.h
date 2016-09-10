@@ -60,7 +60,7 @@ private:
         os<<"\texist     [store id][key]                           judge if the id@key exist"<<el;
         os<<"\texistid   [store id]                                just check the store id"<<el;
         os<<"\texit                                                exit~"<<el;
-        os<<"\thh                                                  alive false"<<el;
+        os<<"\thh                                                  alive check"<<el;
     }
     /**
      * like trim

@@ -21,6 +21,8 @@
 #include "core/RefreshMem.h"
 #include "core/MemKitAutoDumpHandler.h"
 #include "RebuildMem/RebuildMemByLogFile.h"
+#include "MemTimer/TimerFactory.h"
+#include "MemTimer/TemplateOfTimer.h"
 
 typedef struct remote_ds{
     int file_ds;
@@ -420,6 +422,12 @@ void report_to_server_manage(){
     close(sock);
 }
 
+
+void checkTimer()
+{
+    os<<"timer work ok~"<<el;
+}
+
 /**
  * the main
  * @param argc
@@ -427,6 +435,11 @@ void report_to_server_manage(){
  * @return
  */
 int main(int argc,char**argv) {
+    /**
+     * test the timer
+     */
+    //TimerFactory* Timer=new TimerFactory(checkTimer,0,1,10);
+    //TimerTemplate* myTimer=new TimerTemplate(0,1,10);
     /**
      * show the base config
      */

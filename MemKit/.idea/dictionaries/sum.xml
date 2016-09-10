@@ -13,6 +13,9 @@
       <w>remotemem</w>
       <w>remoterunner</w>
       <w>sockaddr</w>
+      <w>templateoftimer</w>
+      <w>timerfactory</w>
+      <w>timerusage</w>
     </words>
   </dictionary>
 </component>
