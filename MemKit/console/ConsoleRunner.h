@@ -22,6 +22,7 @@
 
 #include "../MemKitUtils/MemKitUtils.h"
 #include "../conf/Configure.h"
+#include "../core/BigResponseQuery.h"
 
 #define os std::cout
 #define el std::endl
@@ -52,6 +53,9 @@ private:
         os<<"\tdump      [file][true/false]                        dump to disk.(true means flush the cache)"<<el;
         os<<"\tappend    [store id][key][append value]             append a value"<<el;
         os<<"\tput       [store id][key][value]                    put a key-value"<<el;
+        os<<"\tps        [store_id,key,value]list                  put a list"<<el;
+        os<<"\tks                                                  get the keys list"<<el;
+        os<<"\tss                                                  get the stores list"<<el;
         os<<"\tflush     [store]                                   flush the storage"<<el;
         os<<"\tflusha                                              flush all"<<el;
         os<<"\tinfo                                                show the size"<<el;
@@ -144,6 +148,17 @@ public:
             }
             command=splitVec[0];
             switch (command[0]) {
+                case 'k':{//ks
+                    BigResponseQuery* big=new BigResponseQuery(false,"ks");
+                    big->run();
+                    std::vector<String> key_list;
+                    key_list=big->getResult();
+                    std::vector<String>::iterator vit=key_list.begin();
+                    for(;vit!=key_list.end();vit++){
+                        os<<"\t"<<*vit<<el;
+                    }
+                    break;
+                }
                 case 'h':{
                     os<<"alive"<<el;
                     break;
@@ -248,7 +263,18 @@ public:
                         }
                         break;
 
-                    } else {
+                    }else if(cmd=="ss"){//get the list
+                        BigResponseQuery* big=new BigResponseQuery(false,"ss");
+                        big->run();
+                        std::vector<String> store_list;
+                        store_list=big->getResult();
+                        std::vector<String>::iterator vit=store_list.begin();
+                        for(;vit!=store_list.end();vit++){
+                            os<<"\t"<<*vit<<el;
+                        }
+                        break;
+                    }
+                    else {
                         os << "\t Error input." << el;
                         this->usage();
                         break;
@@ -312,16 +338,22 @@ public:
                     break;
                 }
                 case 'p': {//put
-                    store_id = splitVec[1];
-                    key = splitVec[2];
-                    value = splitVec[3];
-                    /**
-                     * action
-                     */
-                    this->__instance->put(store_id, key, value);
-                    os << "\tput ok~" << el;
-                    if(DEBUG){
-                        os<<"store_id["<<store_id<<"] key["<<key<<"] value["<<value<<"]"<<el;
+                    if(splitVec[0]=="put") {
+                        store_id = splitVec[1];
+                        key = splitVec[2];
+                        value = splitVec[3];
+                        /**
+                         * action
+                         */
+                        this->__instance->put(store_id, key, value);
+                        os << "\tput ok~" << el;
+                        if (DEBUG) {
+                            os << "store_id[" << store_id << "] key[" << key << "] value[" << value << "]" << el;
+                        }
+                    }else if(splitVec[0]=="ps"){
+                        BigResponseQuery* big=new BigResponseQuery(false,"ps",line);
+                        big->run();
+                        os<<"->"<<big->getPutResult()<<el;
                     }
                     break;
                 }

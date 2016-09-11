@@ -422,7 +422,9 @@ void report_to_server_manage(){
     close(sock);
 }
 
-
+/**
+ * just test the timer
+ */
 void checkTimer()
 {
     os<<"timer work ok~"<<el;

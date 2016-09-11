@@ -6,12 +6,14 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/console/ConsoleRunner.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MemTimer/TimerFactory.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MemTimer/TemplateOfTimer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MemTimer/TimerFactory.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/core/MemKit.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/core/MemKitAutoDumpHandler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/core/BigResponseQuery.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/core/RefreshMem.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/remote/RemoteRunner.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MemKitThreadFactory/MemKitThreadFactory.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/conf/Configure.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RebuildMem/RebuildMemByLogFile.h" isTestSource="false" />
     </content>

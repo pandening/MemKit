@@ -174,6 +174,13 @@ MEMKIT_PUBLIC:
         return this->time_to_live;
     }
     /**
+     * get the mem storage
+     * @return
+     */
+    std::map<String,std::map<String,String>> getStorage(){
+        return this->storage;
+    };
+    /**
      * if you want to get an instance
      * @param capacity
      * @return

@@ -2,10 +2,12 @@
   <dictionary name="sum">
     <words>
       <w>addr</w>
+      <w>bigresponsequery</w>
       <w>consolerunner</w>
       <w>hujian</w>
       <w>memkit</w>
       <w>memkitautodumphandler</w>
+      <w>memkitthreadfactory</w>
       <w>memkitutils</w>
       <w>packagetype</w>
       <w>rebuildmembylogfile</w>
@@ -15,6 +17,7 @@
       <w>sockaddr</w>
       <w>templateoftimer</w>
       <w>timerfactory</w>
+      <w>timerthread</w>
       <w>timerusage</w>
     </words>
   </dictionary>
