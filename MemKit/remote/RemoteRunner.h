@@ -141,6 +141,12 @@ public:
     struct sockaddr_in get_sockaddr(){
         return this->server_sockaddr;
     }
+    /**
+     * for close the connection
+     */
+    int getFd(){
+        return this->server_sock_fd;
+    }
 };
 
 #endif //MEMKIT_REMOTERUNNER_H

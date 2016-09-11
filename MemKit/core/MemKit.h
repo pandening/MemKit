@@ -362,6 +362,124 @@ MEMKIT_PUBLIC:
         }
     }
     /**
+     * set the store_id@key=replaceTo
+     * @param store_id
+     * @param key
+     * @param replaceTo  to value
+     * @return
+     */
+    bool replace(String store_id,String key,String replaceTo){
+        if(!this->exist(store_id,key)){
+            return false;
+        }
+        std::map<String,std::map<String,String>>::iterator idItr=this->storage.begin();
+        for(;idItr!=this->storage.end();idItr++){
+            if((*idItr).first==store_id){
+                std::map<String,String>::iterator kit=(*idItr).second.begin();
+                for(;kit!=(*idItr).second.end();kit++){
+                    if((*kit).first==key){
+                        (*kit).second=replaceTo;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;//forever no reach here.
+    }
+
+    /**
+     * rename the store id,if the new store id name is exist,just return false
+     * NOTICE:YOU ALSO NEED TO UPDATE THE INFORMATION IN TTL STORAGE.
+     * @param old_store_id
+     * @param new_store_id
+     */
+    bool renameStore(String old_store_id,String new_store_id){
+        if(this->exist(old_store_id)==false||this->exist(new_store_id)){
+            return false;
+        }
+        std::map<String,std::map<String,String>>::iterator idItr=
+                this->storage.begin(),dit;
+        for(;idItr!=this->storage.end();idItr++){
+            if((*idItr).first==old_store_id){
+                std::map<String,String> tmp=(*idItr).second;
+                dit=idItr;
+                this->storage.erase(dit);
+                this->storage.insert(std::pair<String,std::map<String,String>>(new_store_id,tmp));
+                break;
+            }
+        }
+        //update in storage
+        std::map<String,std::map<String,ttl_t>>::iterator idVit=this->time_to_live.begin(),dVit;
+        for(;idVit!=this->time_to_live.end();idVit++){
+            if((*idVit).first==old_store_id){
+                std::map<String,ttl_t> t=(*idVit).second;
+                dVit=idVit;
+                this->time_to_live.erase(dVit);
+                this->time_to_live.insert(std::pair<String,std::map<String,ttl_t>>(new_store_id,t));
+                break;
+            }
+        }
+        return true;
+    }
+    /**
+     * rename the key.return false means change failed
+     * NOTICE:YOU ALSO NEED TO UPDATE THE INFORMATION IN TTL STORAGE.
+     * @param store_id
+     * @param old_key
+     * @param new_key
+     * @return
+     */
+    bool renameKey(String store_id,String old_key,String new_key){
+        if(!this->exist(store_id,old_key)||this->exist(store_id,new_key)){
+            return false;
+        }
+        std::map<String,std::map<String,String>>::iterator idItr=
+                this->storage.begin();
+        for(;idItr!=this->storage.end();idItr++){
+            if((*idItr).first==store_id){
+                std::map<String,String>::iterator kit=(*idItr).second.begin(),dit;
+                for(;kit!=(*idItr).second.end();kit++){
+                    if((*kit).first==old_key){
+                        //find it.
+                        dit=kit;
+                        String v=(*kit).second;
+                        (*idItr).second.erase(dit);
+                        (*idItr).second.insert(std::pair<String,String>(new_key,v));
+                        //update the information in ttl storage
+                        std::map<String,std::map<String,ttl_t>>::iterator
+                        idVit=this->time_to_live.begin();
+                        for(;idVit!=this->time_to_live.end();idVit++){
+                            if((*idVit).first==store_id){
+                                std::map<String,ttl_t>::iterator tit=(*idVit).second.begin();
+                                for(;tit!=(*idVit).second.end();tit++){
+                                    if((*tit).first==old_key){
+                                        //find it..
+                                        ttl_t ov=(*tit).second;
+                                        std::map<String,ttl_t>::iterator rit=tit;
+                                        (*idVit).second.erase(rit);
+                                        (*idVit).second.insert(std::pair<String,ttl_t>(new_key,ov));
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * get an random key
+     * @return
+     */
+    String randomKey(){
+       /**
+        * i will implement soon
+        */
+        return "not_implement";
+    }
+
+    /**
      * dump the storage to disk
      * @param clear true means you want to clear the storage after dump.
      * @param file file to dump.

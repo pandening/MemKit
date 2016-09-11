@@ -43,6 +43,10 @@ private:
      */
     String kvsList;
     /**
+     * the store_id
+     */
+    String store_id;
+    /**
      * result vector
      */
     std::vector<std::string> vec;
@@ -58,21 +62,38 @@ private:
 protected:
     /**
      * get keys list
+     * @param store_id you want to get the store id 's keys list
      * @return
      */
-    std::vector<std::string> getKeysList(){
+    std::vector<std::string> getKeysList(String store_id=""){
         std::vector<String> res;
         res.clear();
         if(this->Mem->size()==0){
             return res;
         }
-        std::map<String,std::map<String,String>>::iterator idItr=
-        this->Mem->getStorage().begin();
-        std::map<String,String>::iterator kit;
-        for(;idItr!=this->Mem->getStorage().end();idItr++){
-            kit=(*idItr).second.begin();
-            for(;kit!=(*idItr).second.end();kit++){
-                res.push_back((*kit).first);
+        if(store_id=="") {
+            std::map<String, std::map<String, String>>::iterator idItr =
+                    this->Mem->getStorage().begin();
+            std::map<String, String>::iterator kit;
+            for (; idItr != this->Mem->getStorage().end(); idItr++) {
+                kit = (*idItr).second.begin();
+                for (; kit != (*idItr).second.end(); kit++) {
+                    res.push_back((*kit).first);
+                }
+            }
+        }else{
+            //if this store exist
+            std::map<String, std::map<String, String>>::iterator idItr =
+                    this->Mem->getStorage().begin();
+            std::map<String, String>::iterator kit;
+            for(;idItr!=this->Mem->getStorage().end();idItr++){
+                if((*idItr).first==store_id){
+                    kit=(*idItr).second.begin();
+                    for(kit;kit!=(*idItr).second.end();kit++){
+                        res.push_back((*kit).first);
+                    }
+                    break;//i think the store is only one
+                }
             }
         }
         return res;
@@ -125,19 +146,21 @@ public:
      * @param loop
      * @param type
      * @param kvs puts
+     * @param store_id store id to get
      * @return
      */
-    BigResponseQuery(bool loop, std::string type,String kvs="") : MemKitThreadFactory(loop) {
+    BigResponseQuery(bool loop, std::string type,String kvs="",String store_id="") : MemKitThreadFactory(loop) {
         this->query_type=type;
         Mem=MemKit::getInstance(0);
         this->kvsList=kvs;
+        this->store_id=store_id;
     }
     /**
      * override
      */
     void execute(){
         if(this->query_type=="ks"){
-            this->vec=this->getKeysList();
+            this->vec=this->getKeysList(store_id);
         }else if(this->query_type=="ss"){
             this->vec=this->getStoresList();
         }else if(this->query_type=="ps"){

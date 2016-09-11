@@ -54,7 +54,7 @@ private:
         os<<"\tappend    [store id][key][append value]             append a value"<<el;
         os<<"\tput       [store id][key][value]                    put a key-value"<<el;
         os<<"\tps        [store_id,key,value]list                  put a list"<<el;
-        os<<"\tks                                                  get the keys list"<<el;
+        os<<"\tks        [store_id->default is null]               get the keys list"<<el;
         os<<"\tss                                                  get the stores list"<<el;
         os<<"\tflush     [store]                                   flush the storage"<<el;
         os<<"\tflusha                                              flush all"<<el;
@@ -65,6 +65,10 @@ private:
         os<<"\texistid   [store id]                                just check the store id"<<el;
         os<<"\texit                                                exit~"<<el;
         os<<"\thh                                                  alive check"<<el;
+        os<<"\trs        [old store id][new store id]              rename a store id"<<el;
+        os<<"\trk        [store id][old key][new key]              rename a key"<<el;
+        os<<"\tre        [store id][key][replace to]               replace the value"<<el;
+        os<<"\trd                                                  get an random key"<<el;
     }
     /**
      * like trim
@@ -149,7 +153,11 @@ public:
             command=splitVec[0];
             switch (command[0]) {
                 case 'k':{//ks
-                    BigResponseQuery* big=new BigResponseQuery(false,"ks");
+                    store_id.clear();
+                    if(splitVec.size()==2){
+                        store_id=splitVec[1];
+                    }
+                    BigResponseQuery* big=new BigResponseQuery(false,"ks","",store_id);
                     big->run();
                     std::vector<String> key_list;
                     key_list=big->getResult();
@@ -164,13 +172,49 @@ public:
                     break;
                 }
                 case 'r':{
-                    store_id=splitVec[1];
-                    key=splitVec[2];
-                    if(DEBUG) {
-                        os << "delete store[" << store_id << "] key[" << key << "]" << el;
+                    if(command=="rs"){//rename a store
+                        String old_sid,new_sid;
+                        old_sid=splitVec[1];
+                        new_sid=splitVec[2];
+                        bool res=this->__instance->renameStore(old_sid,new_sid);
+                        if(res==true){
+                            os<<"rename ok"<<el;
+                        }else{
+                            os<<"rename fail"<<el;
+                        }
+                    }else if(command=="rk"){//rename a key
+                        String old_key,new_key;
+                        store_id=splitVec[1];
+                        old_key=splitVec[2];
+                        new_key=splitVec[3];
+                        bool res=this->__instance->renameKey(store_id,old_key,new_key);
+                        if(res==true){
+                            os<<"rename ok"<<el;
+                        }else{
+                            os<<"rename fail"<<el;
+                        }
+                    }else if(command=="rm") {
+                        store_id = splitVec[1];
+                        key = splitVec[2];
+                        if (DEBUG) {
+                            os << "delete store[" << store_id << "] key[" << key << "]" << el;
+                        }
+                        this->__instance->popMem(store_id, key);
+                        os << "deleted" << el;
+                    }else if(command=="re"){
+                        store_id=splitVec[1];
+                        key=splitVec[2];
+                        value=splitVec[3];
+                        bool res=this->__instance->replace(store_id,key,value);
+                        if(res==true){
+                            os<<"replace ok"<<el;
+                        }else{
+                            os<<"replace fail"<<el;
+                        }
+                    }else if(command=="rd"){
+                        key=this->__instance->randomKey();
+                        os<<"random:"<<key<<el;
                     }
-                    this->__instance->popMem(store_id,key);
-                    os<<"deleted"<<el;
                     break;
                 }
                 case 'e':{
@@ -390,7 +434,7 @@ public:
                     os << "\tcapacity:" << this->__instance->capacity()
                        << " size:" << this->__instance->size()<<" ip:"
                        <<config->getIP()<<" port:"<<config->getPort()
-                       <<","<<config->getName()<<el;
+                       <<" name:"<<config->getName()<<el;
                     break;
                 }
                 default: {

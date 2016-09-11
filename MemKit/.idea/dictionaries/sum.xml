@@ -7,9 +7,11 @@
       <w>hujian</w>
       <w>memkit</w>
       <w>memkitautodumphandler</w>
+      <w>memkitcluster</w>
       <w>memkitthreadfactory</w>
       <w>memkitutils</w>
       <w>packagetype</w>
+      <w>randomutils</w>
       <w>rebuildmembylogfile</w>
       <w>refreshmem</w>
       <w>remotemem</w>
