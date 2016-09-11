@@ -41,13 +41,16 @@ No.3 how to use it?
   Enjoy yourself!       
   the follow codes will tell you how to use the memkit.it's very easy to use.   
 ```
-        os<<"\tload      [filePath]                                load cache from file,the old mem will be cleared."<<el;
+      os<<"\tload      [filePath]                                load cache from file,the old mem will be cleared."<<el;
         os<<"\tset       [store id][key][time to live(mills)]      set ttl for store@key"<<el;
         os<<"\tttl       [store id][key]                           get the ttl of store@key"<<el;
         os<<"\tget       [store id][key]                           get the value"<<el;
         os<<"\tdump      [file][true/false]                        dump to disk.(true means flush the cache)"<<el;
         os<<"\tappend    [store id][key][append value]             append a value"<<el;
         os<<"\tput       [store id][key][value]                    put a key-value"<<el;
+        os<<"\tps        [store_id,key,value]list                  put a list"<<el;
+        os<<"\tks                                                  get the keys list"<<el;
+        os<<"\tss                                                  get the stores list"<<el;
         os<<"\tflush     [store]                                   flush the storage"<<el;
         os<<"\tflusha                                              flush all"<<el;
         os<<"\tinfo                                                show the size"<<el;
@@ -56,7 +59,7 @@ No.3 how to use it?
         os<<"\texist     [store id][key]                           judge if the id@key exist"<<el;
         os<<"\texistid   [store id]                                just check the store id"<<el;
         os<<"\texit                                                exit~"<<el;
-        os<<"\thh                                                  alive false"<<el;
+        os<<"\thh                                                  alive check"<<el;
 
 ```
 No.4 LTS 
@@ -75,6 +78,9 @@ No.5 update information
             (1). re-organize the files,and set up the auto-dump engine,you can rebuild the memkit now~  
             (2). add new timer,let the timer to control the memkit's securty  
             (3). show the run interface for you~
+5.2016/9/11 (1). create the .sh file,you can use .sh file to run the memkit
+            (2). more apis,such as 'ps','ss','ks',etc,you can check the consoleRunner.h file to get details 
+            (3). new timer and thread factory,more fixable and stable.   
 ```
 
 No.6 Developer
