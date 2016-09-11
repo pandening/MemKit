@@ -630,12 +630,6 @@ MEMKIT_PUBLIC:
           * else,just refuse insert
           */
         else {
-            TTL_info myTTL;
-            myTTL.store_id=store_id;
-            myTTL.key=key;
-            myTTL.ttl_info.putTime=getMillis();
-            myTTL.ttl_info.TTL=atol(config->getTTL().c_str());
-            set(myTTL);
             std::cout<<"out of capacity,refuse to insert."<<std::endl;
             return this->storage_size;
         }
