@@ -97,7 +97,6 @@ No.5 update information
             (3). move the .sh file to bin/
             (4). create a thread pool,but not work now.
             (5). the memkit can get the system's memory information now,then the manage can set capacity according to this info.
-            (6). more stable and fast.
 ```
 
 No.6 Developer
