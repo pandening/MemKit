@@ -64,6 +64,7 @@ No.3 how to use it?
         os<<"\trk        [store id][old key][new key]              rename a key"<<el;
         os<<"\tre        [store id][key][replace to]               replace the value"<<el;
         os<<"\trd                                                  get an random key"<<el;
+        os<<"\tmem                                                 get the mem info.<total,used,free>"<<el;
 
 ```
 No.4 LTS 
@@ -82,7 +83,7 @@ No.5 update information
             (1). re-organize the files,and set up the auto-dump engine,you can rebuild the memkit now~  
             (2). add new timer,let the timer to control the memkit's securty  
             (3). show the run interface for you~
-5.2016/9/11 
+5. 2016/9/11 
             (1). create the .sh file,you can use .sh file to run the memkit
             (2). more apis,such as 'ps','ss','ks',etc,you can check the consoleRunner.h file to get details 
             (3). new timer and thread factory,more fixable and stable.  
@@ -90,6 +91,13 @@ No.5 update information
             (5). you can rename a storage now,return true/false to show the result
             (6). you can rename a key's name,return true/false
             (7). add some new files,but now they are stupid.
+6. 2016/9/12 
+            (1). fix the load bugs,now the load function works well.
+            (2). remove some useless codes.
+            (3). move the .sh file to bin/
+            (4). create a thread pool,but not work now.
+            (5). the memkit can get the system's memory information now,then the manage can set capacity according to this info.
+            (6). more stable and fast.
 ```
 
 No.6 Developer
@@ -127,5 +135,5 @@ No.9 Links
 
 No.10 Like?
 --------------------------------
-![image](https://github.com/pandening/images/blob/master/interface.png)
-![image](https://github.com/pandening/images/blob/master/interface%20(2).png)
+![image](https://github.com/pandening/images/blob/master/newStart.png)
+![image](https://github.com/pandening/images/blob/master/op.png)
