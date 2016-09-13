@@ -23,6 +23,8 @@
 #include "RebuildMem/RebuildMemByLogFile.h"
 #include "MemTimer/TimerFactory.h"
 #include "MemTimer/TemplateOfTimer.h"
+#include "ThreadPool/ThreadPool.h"
+#include "conf/ComputerMem.h"
 
 typedef struct remote_ds{
     int file_ds;
@@ -43,22 +45,6 @@ void do_remote_job(remote_ds_t info) {
         while(rcv_len==0||rcv_len==-1){
             rcv_len=recv(info.file_ds, buffer, sizeof(buffer), 0);
         }
-        /**
-         * 1.get
-         * 2.put
-         * 3.set
-         * 4.ttl
-         * 5.setc
-         * 6.dump
-         * 7.append
-         * 8.flush
-         * 9.flusha
-         * 10.info
-         * 11.exit
-         * 12.load
-         * 13.rm
-         * 14.exist
-         */
         String line, store_id, key, value, cmd, file, ttl, cap, clear, newV, command, response;
         std::vector<String> splitVec;
         line = buffer;
@@ -81,17 +67,81 @@ void do_remote_job(remote_ds_t info) {
         }
         command = splitVec[0];
         switch (command[0]) {
+            case 'm':{//get the mem
+                if(info.memKit->getTotalMem()==0){
+                    ComputerMem* computerMem=new ComputerMem;
+                }
+                response=MemKitUtils::parseString(info.memKit->getTotalMem())+","+
+                        MemKitUtils::parseString(info.memKit->getUsedMem())+","
+                        +MemKitUtils::parseString(info.memKit->getFreeMem());
+                break;
+            }
+            case 'k':{//ks
+                store_id.clear();
+                if(splitVec.size()==2){
+                    store_id=splitVec[1];
+                }
+                BigResponseQuery* big=new BigResponseQuery(false,"ks","",store_id);
+                big->run();
+                std::vector<String> key_list;
+                key_list=big->getResult();
+                std::vector<String>::iterator vit=key_list.begin();
+                response="";
+                for(;vit!=key_list.end();vit++){
+                    response+=*vit;
+                    response+=",";
+                }
+                response=response.substr(0,response.length()-1);
+                break;
+            }
             case 'h':{//i am alive
                 response="alive";
                 break;
             }
             case 'r':{
-                store_id=splitVec[1];
-                key=splitVec[2];
-                if(DEBUG) {
-                    os << "delete store[" << store_id << "] key[" << key << "]" << el;
+                if(command=="rs"){//rename a store
+                    String old_sid,new_sid;
+                    old_sid=splitVec[1];
+                    new_sid=splitVec[2];
+                    bool res=info.memKit->renameStore(old_sid,new_sid);
+                    if(res==true){
+                        response="ok";
+                    }else{
+                        response="fail";
+                    }
+                }else if(command=="rk"){//rename a key
+                    String old_key,new_key;
+                    store_id=splitVec[1];
+                    old_key=splitVec[2];
+                    new_key=splitVec[3];
+                    bool res=info.memKit->renameKey(store_id,old_key,new_key);
+                    if(res==true){
+                        response="ok";
+                    }else{
+                        response="fail";
+                    }
+                }else if(command=="rm") {
+                    store_id = splitVec[1];
+                    key = splitVec[2];
+                    if (DEBUG) {
+                        os << "delete store[" << store_id << "] key[" << key << "]" << el;
+                    }
+                    info.memKit->popMem(store_id, key);
+                    response="ok";
+                }else if(command=="re"){
+                    store_id=splitVec[1];
+                    key=splitVec[2];
+                    value=splitVec[3];
+                    bool res=info.memKit->replace(store_id,key,value);
+                    if(res==true){
+                        response="ok";
+                    }else{
+                        response="fail";
+                    }
+                }else if(command=="rd"){
+                    key=info.memKit->randomKey(true);
+                    response=key;
                 }
-                response=info.memKit->popMem(store_id,key);
                 break;
             }
             case 'e': {
@@ -188,8 +238,18 @@ void do_remote_job(remote_ds_t info) {
                     info.memKit->setCapacity(atol(cap.c_str()));
                     response = MemKitUtils::parseString(info.memKit->capacity());
                     break;
-                } else {
-                    response = "0";
+                } else if(cmd=="ss"){//get the list
+                    BigResponseQuery* big=new BigResponseQuery(false,"ss");
+                    big->run();
+                    std::vector<String> store_list;
+                    store_list=big->getResult();
+                    std::vector<String>::iterator vit=store_list.begin();
+                    response="";
+                    for(;vit!=store_list.end();vit++){
+                        response+=*vit;
+                        response+=",";
+                    }
+                    response.substr(0,response.length()-1);
                     break;
                 }
             }
@@ -233,16 +293,22 @@ void do_remote_job(remote_ds_t info) {
                 break;
             }
             case 'p': {//put
-                store_id = splitVec[1];
-                key = splitVec[2];
-                value = splitVec[3];
-                /**
-                 * action
-                 */
-                info.memKit->put(store_id, key, value);
-                response = "ok";
-                if (DEBUG) {
-                    os << "store_id[" << store_id << "] key[" << key << "] value[" << value << "]" << el;
+                if(splitVec[0]=="put") {
+                    store_id = splitVec[1];
+                    key = splitVec[2];
+                    value = splitVec[3];
+                    /**
+                     * action
+                     */
+                    info.memKit->put(store_id, key, value);
+                    response="ok";
+                    if (DEBUG) {
+                        os << "store_id[" << store_id << "] key[" << key << "] value[" << value << "]" << el;
+                    }
+                }else if(splitVec[0]=="ps"){
+                    BigResponseQuery* big=new BigResponseQuery(false,"ps",line);
+                    big->run();
+                    response=big->getPutResult();
                 }
                 break;
             }
@@ -437,11 +503,17 @@ void checkTimer()
  * @return
  */
 int main(int argc,char**argv) {
+    ComputerMem* computerMem=new ComputerMem;
+
+    //system("free -m >>info.txt");
     /**
      * test the timer
      */
     //TimerFactory* Timer=new TimerFactory(checkTimer,0,1,10);
     //TimerTemplate* myTimer=new TimerTemplate(0,1,10);
+    ThreadPool* threadPool=new ThreadPool();
+    os<<"thread pool size:"<<threadPool->size()<<el;
+    os<<"thread pool status:"<<threadPool->status()<<el;
     /**
      * show the base config
      */
@@ -459,6 +531,9 @@ int main(int argc,char**argv) {
     os<<"\trebuild flag:"<<config->getAutoRebuildFlag()<<el;
     os<<"\tauto dump timer:"<<config->getAutoDumpTime()<<" s"<<el;
     os<<"\tlog file:"<<config->getDumpFile()<<el;
+    os<<"\tcomputer total mem size:"<<computerMem->getTotalMemSize()<<"Mbs"<<el;
+    os<<"\tcomputer used mem size:"<<computerMem->getUsedMemSize()<<"Mbs"<<el;
+    os<<"\tcomputer free mem size:"<<computerMem->getFreeMemSize()<<"Mbs"<<el;
     String cmd;
     while(true){
         os<<el<<"\tlocal/remote/exit:";

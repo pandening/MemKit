@@ -83,6 +83,18 @@ MEMKIT_PRIVATE:
      * the config
      */
     MemKitConfig* config;
+    /**
+     * total mem size
+     */
+    int total_mem_size;
+    /**
+     * used mem size
+     */
+    int used_mem_size;
+    /**
+     * free mem size
+     */
+    int free_mem_size;
 
     /**
      * THE PROTECTED PART
@@ -121,6 +133,9 @@ MEMKIT_PROTECTED:
         this->storage_size=0;
         this->storage.clear();
         config=MemKitConfig::getConfigure();
+        this->free_mem_size=0;
+        this->total_mem_size=0;
+        this->used_mem_size=0;
     }
     /**
      * if you want to load the file to memcache
@@ -139,9 +154,10 @@ MEMKIT_PROTECTED:
                /**
                 * get the key and value
                 */
-               int sp=line.find_first_of(' ');
+               int sp=line.find_first_of(" ");
                key=line.substr(0,sp);
-               value=line.substr(sp,line.length());
+               value=line.substr(sp,line.find_first_of(" "));
+               value=value.substr(value.find_first_not_of(" "));
                memKit_instance->put(store_id,key,value);
            }
         }
@@ -166,6 +182,49 @@ MEMKIT_PROTECTED:
      * THE PUBLIC PART
      */
 MEMKIT_PUBLIC:
+    /**
+     * set the mem size
+     * @param ms
+     */
+    void setTotalMem(int ms){
+        this->total_mem_size=ms;
+    }
+    /**
+     * get the total mem
+     * @return
+     */
+    int getTotalMem(){
+        return this->total_mem_size;
+    }
+    /**
+     * set the used mem
+     * @param ms
+     */
+    void setUsedMem(int ms){
+        this->used_mem_size=ms;
+    }
+    /**
+     * get
+     * @return
+     */
+    int getUsedMem(){
+        return this->used_mem_size;
+    }
+    /**
+     *
+     * @param ms
+     */
+    void setFreeMem(int ms){
+        this->free_mem_size=ms;
+    }
+    /**
+     *
+     * @return
+     */
+    int getFreeMem(){
+        return this->free_mem_size;
+    }
+
     /**
      * get the ttl storage
      * @return
@@ -470,13 +529,37 @@ MEMKIT_PUBLIC:
     }
     /**
      * get an random key
+     * @param ikv ikv=true means you want to get complete information
+     * return the store_id,key,value
      * @return
      */
-    String randomKey(){
-       /**
-        * i will implement soon
-        */
-        return "not_implement";
+    String randomKey(bool ikv=false){
+        srand((unsigned)time(NULL));
+        int randIndex=0;
+        if(this->size()!=1){
+            randIndex=(rand()%(this->size()-1));
+        }
+        int till=0;
+        std::map<String,std::map<String,String>>::iterator idItr=this->storage.begin();
+        std::map<String,String>::iterator kit;
+        for(;idItr!=this->storage.end();idItr++){
+            if((*idItr).second.size()!=0){
+                if((*idItr).second.size()+till<randIndex){
+                    till+=(*idItr).second.size();
+                }else{
+                    kit=(*idItr).second.begin();
+                    while(till<randIndex){
+                        till++;
+                        kit++;
+                    }
+                    if(ikv){
+                        return (*idItr).first+","+(*kit).first+","+(*kit).second;
+                    }
+                    return (*kit).first;
+                }
+            }
+        }
+        return "null";
     }
 
     /**

@@ -3,8 +3,10 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/conf/Configure.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/conf/ComputerMem.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MemKitUtils/MemKitUtils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ThreadPool/ThreadPool.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/console/ConsoleRunner.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MemTimer/TimerFactory.h" isTestSource="false" />
@@ -15,7 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/core/RefreshMem.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/remote/RemoteRunner.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MemKitThreadFactory/MemKitThreadFactory.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/controller/MemKitCluster.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/controller/MemKitController.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RebuildMem/RebuildMemByLogFile.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

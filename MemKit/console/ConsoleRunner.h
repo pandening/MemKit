@@ -23,6 +23,7 @@
 #include "../MemKitUtils/MemKitUtils.h"
 #include "../conf/Configure.h"
 #include "../core/BigResponseQuery.h"
+#include "../conf/ComputerMem.h"
 
 #define os std::cout
 #define el std::endl
@@ -69,6 +70,7 @@ private:
         os<<"\trk        [store id][old key][new key]              rename a key"<<el;
         os<<"\tre        [store id][key][replace to]               replace the value"<<el;
         os<<"\trd                                                  get an random key"<<el;
+        os<<"\tmem                                                 get the mem info.<total,used,free>"<<el;
     }
     /**
      * like trim
@@ -152,6 +154,14 @@ public:
             }
             command=splitVec[0];
             switch (command[0]) {
+                case 'm':{//get the mem
+                    if(this->__instance->getTotalMem()==0){
+                        ComputerMem* computerMem=new ComputerMem;
+                    }
+                    os<<this->__instance->getTotalMem()<<"Mbs,"<<this->__instance->getUsedMem()
+                      <<"Mbs,"<<this->__instance->getFreeMem()<<"Mbs"<<el;
+                    break;
+                }
                 case 'k':{//ks
                     store_id.clear();
                     if(splitVec.size()==2){
@@ -212,7 +222,7 @@ public:
                             os<<"replace fail"<<el;
                         }
                     }else if(command=="rd"){
-                        key=this->__instance->randomKey();
+                        key=this->__instance->randomKey(true);
                         os<<"random:"<<key<<el;
                     }
                     break;
@@ -438,8 +448,6 @@ public:
                     break;
                 }
                 default: {
-                    os << "\tunknown command!" << el;
-                    this->usage();
                     break;
                 }
             }

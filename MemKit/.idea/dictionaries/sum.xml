@@ -3,6 +3,7 @@
     <words>
       <w>addr</w>
       <w>bigresponsequery</w>
+      <w>computermem</w>
       <w>consolerunner</w>
       <w>hujian</w>
       <w>memkit</w>
@@ -18,6 +19,7 @@
       <w>remoterunner</w>
       <w>sockaddr</w>
       <w>templateoftimer</w>
+      <w>threadpool</w>
       <w>timerfactory</w>
       <w>timerthread</w>
       <w>timerusage</w>
