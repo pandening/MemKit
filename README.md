@@ -82,7 +82,8 @@ No.5 update information
             (1). re-organize the files,and set up the auto-dump engine,you can rebuild the memkit now~  
             (2). add new timer,let the timer to control the memkit's securty  
             (3). show the run interface for you~
-5.2016/9/11 (1). create the .sh file,you can use .sh file to run the memkit
+5.2016/9/11 
+            (1). create the .sh file,you can use .sh file to run the memkit
             (2). more apis,such as 'ps','ss','ks',etc,you can check the consoleRunner.h file to get details 
             (3). new timer and thread factory,more fixable and stable.  
             (4). you get replace a key's value to another now,but you should offer the new value,not another store@value
