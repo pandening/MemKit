@@ -21,10 +21,8 @@
 #include "core/RefreshMem.h"
 #include "core/MemKitAutoDumpHandler.h"
 #include "RebuildMem/RebuildMemByLogFile.h"
-#include "MemTimer/TimerFactory.h"
-#include "MemTimer/TemplateOfTimer.h"
 #include "ThreadPool/ThreadPool.h"
-#include "conf/ComputerMem.h"
+#include "Cached/Cached.h"
 
 typedef struct remote_ds{
     int file_ds;
@@ -489,14 +487,6 @@ void report_to_server_manage(){
 }
 
 /**
- * just test the timer
- */
-void checkTimer()
-{
-    os<<"timer work ok~"<<el;
-}
-
-/**
  * the main
  * @param argc
  * @param argv
@@ -504,20 +494,15 @@ void checkTimer()
  */
 int main(int argc,char**argv) {
     ComputerMem* computerMem=new ComputerMem;
-
-    //system("free -m >>info.txt");
+    MemKitConfig* config=MemKitConfig::getConfigure();
     /**
      * test the timer
      */
     //TimerFactory* Timer=new TimerFactory(checkTimer,0,1,10);
     //TimerTemplate* myTimer=new TimerTemplate(0,1,10);
     ThreadPool* threadPool=new ThreadPool();
-    os<<"thread pool size:"<<threadPool->size()<<el;
-    os<<"thread pool status:"<<threadPool->status()<<el;
-    /**
-     * show the base config
-     */
-    MemKitConfig* config=MemKitConfig::getConfigure();
+    os<<"\tthread pool size:"<<threadPool->size()<<el;
+    os<<"\tthread pool status:"<<threadPool->status()<<el;
     os<<"\tip:"<<config->getIP()<<el;
     os<<"\tport:"<<config->getPort()<<el;
     os<<"\tcapacity:"<<config->getCapacity()<<el;

@@ -9,5 +9,5 @@ set(SOURCE_FILES main.cpp core/MemKit.h MemKitUtils/MemKitUtils.h
         RebuildMem/RebuildMemByLogFile.h core/MemKitAutoDumpHandler.h
         MemTimer/TimerFactory.h MemTimer/TemplateOfTimer.h
         core/BigResponseQuery.h MemKitThreadFactory/MemKitThreadFactory.h
-        controller/MemKitController.h ThreadPool/ThreadPool.h conf/ComputerMem.h)
+        ThreadPool/ThreadPool.h conf/ComputerMem.h MemKitAllocator/MemoryPool.h MemKitAllocator/SimpleMemAlloc.h Cached/Cached.h Cached/SimpleConstructor.h Cached/MemSnapshot.h)
 add_executable(MemKit ${SOURCE_FILES})

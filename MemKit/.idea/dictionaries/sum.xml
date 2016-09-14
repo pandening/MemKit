@@ -3,20 +3,30 @@
     <words>
       <w>addr</w>
       <w>bigresponsequery</w>
+      <w>cacheddata</w>
       <w>computermem</w>
       <w>consolerunner</w>
+      <w>hjstl</w>
       <w>hujian</w>
+      <w>malloc</w>
       <w>memkit</w>
       <w>memkitautodumphandler</w>
       <w>memkitcluster</w>
       <w>memkitthreadfactory</w>
       <w>memkitutils</w>
+      <w>memorypool</w>
+      <w>memsnapshot</w>
+      <w>nfreelists</w>
+      <w>nnodes</w>
       <w>packagetype</w>
       <w>randomutils</w>
+      <w>realloc</w>
       <w>rebuildmembylogfile</w>
       <w>refreshmem</w>
       <w>remotemem</w>
       <w>remoterunner</w>
+      <w>simpleconstructor</w>
+      <w>simplememalloc</w>
       <w>sockaddr</w>
       <w>templateoftimer</w>
       <w>threadpool</w>
