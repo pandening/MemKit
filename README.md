@@ -224,10 +224,10 @@ limitations under the License.
 
 ## No.9 Links
 
-Another project based on this project:[MemKit-Cluster](https://github.com/pandening/MemKit-Cluster)
+Another project based on this project:[ MemKit-Cluster ](https://github.com/pandening/MemKit-Cluster)
 
 ## No.10 Like?
 
-![]([https://github.com/pandening/images/blob/master/newStart.png)](https://github.com/pandening/images/blob/master/newStart.png))
+![image]([https://github.com/pandening/images/blob/master/newStart.png)](https://github.com/pandening/images/blob/master/newStart.png))
 
-![]([https://github.com/pandening/images/blob/master/op.png)](https://github.com/pandening/images/blob/master/op.png))
+![image]([https://github.com/pandening/images/blob/master/op.png)](https://github.com/pandening/images/blob/master/op.png))
