@@ -228,6 +228,6 @@ Another project based on this project:[ MemKit-Cluster ](https://github.com/pand
 
 ## No.10 Like?
 
-![image](https://github.com/pandening/images/blob/master/newStart.png]
+![image](https://github.com/pandening/images/blob/master/newStart.png)
 
-![image](https://github.com/pandening/images/blob/master/op.png]
+![image](https://github.com/pandening/images/blob/master/op.png)
